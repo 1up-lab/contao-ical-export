@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<xliff version="1.1">
+    <file datatype="php" original="system/modules/ical-export/languages/en/default.php" source-language="en">
+        <body>
+            <trans-unit id="MSC.ical_download">
+                <source>Add to calendar</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

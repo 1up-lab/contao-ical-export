@@ -1,0 +1,14 @@
+<?xml version="1.0" ?><xliff version="1.1">
+    <file datatype="php" original="system/modules/ical-export/languages/en/modules.php" source-language="en">
+        <body>
+            <trans-unit id="FMD.ical_export.0">
+                <source>iCal Export/Download</source>
+                <target>iCal Export/Download</target>
+            </trans-unit>
+            <trans-unit id="FMD.ical_export.1">
+                <source>Adds a download link for the calendar ics file</source>
+                <target>Erzeugt einen Download-Link für die ics-Datei</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

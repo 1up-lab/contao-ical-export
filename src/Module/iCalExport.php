@@ -93,8 +93,8 @@ class iCalExport extends \Events
         }
 
         $this->Template->href     = \Environment::get('request') . "?ics";
-        $this->Template->title    = "Im Kalendar eintragen";
-        $this->Template->link     = "Im Kalendar eintragen";
+        $this->Template->title    = $GLOBALS['TL_LANG']['MSC']['ical_download'];
+        $this->Template->link     = $GLOBALS['TL_LANG']['MSC']['ical_download'];
         $this->Template->objEvent = $objEvent->startTime;
     }
 }
