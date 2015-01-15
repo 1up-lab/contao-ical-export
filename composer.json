@@ -1,0 +1,56 @@
+{
+  "name":"oneup/contao-ical-export",
+  "description":"Provides a module for downloading ical files generated from events. The output will follow RFC 2445 as best as possible.",
+  "keywords":["contao", "ical", "icalendar", "export", "download"],
+  "type":"contao-module",
+  "homepage":"http://1up.io",
+  "license":"MIT",
+  "authors":[
+    {
+      "name":"David Greminger",
+      "email":"dg@1up.io",
+      "homepage":"http://1up.io",
+      "role":"Developer"
+    }
+  ],
+  "support":{
+    "email":"hello@1up.io",
+    "issues":"https://github.com/1up-lab/contao-ical-export/issues",
+    "irc":"irc://irc.freenode.org/contao.dev",
+    "source":"https://github.com/1up-lab/contao-ical-export"
+  },
+  "require":{
+    "php":">=5.4",
+    "contao/core":">=3.2,<3.5-dev",
+    "contao-community-alliance/composer-plugin": "~2.0",
+    "eluceo/ical": "~0.6"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.4"
+  },
+  "conflict": {
+    "contao/core": "3.4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Oneup\\iCalExport\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Oneup\\Test\\iCalExport\\": "tests"
+    }
+  },
+  "extra": {
+    "contao": {
+      "sources": {
+        "contao": "system/modules/ical-export"
+      }
+    },
+    "branch-alias": {
+      "dev-master": "1.0.x-dev"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
