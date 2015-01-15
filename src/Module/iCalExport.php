@@ -68,6 +68,7 @@ class iCalExport extends \Events
             ->setUseUtc(false)
             ->setLocation($objEvent->location)
             ->setNoTime($noTime);
+        
         $vCalendar->addComponent($vEvent);
 
         header('Content-Type: text/calendar; charset=utf-8');
