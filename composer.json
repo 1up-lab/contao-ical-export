@@ -1,6 +1,6 @@
 {
   "name":"oneup/contao-ical-export",
-  "description":"Provides a module for downloading ical files generated from events. The output will follow RFC 2445 as best as possible.",
+  "description":"A contao module for downloading ical files generated from events. The output will follow RFC 2445 as best as possible.",
   "keywords":["contao", "ical", "icalendar", "export", "download"],
   "type":"contao-module",
   "homepage":"http://1up.io",
