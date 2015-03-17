@@ -4,7 +4,7 @@
         <body>
             <trans-unit id="MSC.ical_download">
                 <source>Add to calendar</source>
-                <target>Im Kalendar eintragen</target>
+                <target>Im Kalender eintragen</target>
             </trans-unit>
         </body>
     </file>
