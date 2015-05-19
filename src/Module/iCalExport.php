@@ -81,8 +81,6 @@ class iCalExport extends \Events
 
     protected function compile()
     {
-        global $objPage;
-
         $objEvent = \CalendarEventsModel::findPublishedByParentAndIdOrAlias(\Input::get('events'), $this->cal_calendar);
 
         if (\Input::get('ics') === '') {
@@ -92,6 +90,6 @@ class iCalExport extends \Events
         $this->Template->href     = \Environment::get('request')."?ics";
         $this->Template->title    = $GLOBALS['TL_LANG']['MSC']['ical_download'];
         $this->Template->link     = $GLOBALS['TL_LANG']['MSC']['ical_download'];
-        $this->Template->objEvent = $objEvent->startTime;
+        $this->Template->objEvent = $objEvent;
     }
 }
