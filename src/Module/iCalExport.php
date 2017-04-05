@@ -64,7 +64,7 @@ class iCalExport extends \Events
         $vEvent
             ->setDtStart(\DateTime::createFromFormat("d.m.Y - H:i:s", date("d.m.Y - H:i:s", $objEvent->startTime)))
             ->setDtEnd(\DateTime::createFromFormat("d.m.Y - H:i:s", date("d.m.Y - H:i:s", $objEvent->endTime)))
-            ->setSummary($objEvent->title)
+            ->setSummary(strip_tags($this->replaceInsertTags($objEvent->title)))
             ->setUseUtc(false)
             ->setLocation($objEvent->location)
             ->setNoTime($noTime);
