@@ -68,6 +68,16 @@ class iCalExport extends \Events
             ->setUseUtc(false)
             ->setLocation($objEvent->location)
             ->setNoTime($noTime);
+
+        // HOOK: modify the vEvent
+        if (isset($GLOBALS['TL_HOOKS']['modifyIcsFile']) && is_array($GLOBALS['TL_HOOKS']['modifyIcsFile']))
+        {
+            foreach ($GLOBALS['TL_HOOKS']['modifyIcsFile'] as $callback)
+            {
+                $this->import($callback[0]);
+                $this->{$callback[0]}->{$callback[1]}($vEvent, $objEvent, $this);
+            }
+        }
         
         $vCalendar->addComponent($vEvent);
 
