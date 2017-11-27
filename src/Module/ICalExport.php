@@ -1,20 +1,28 @@
 <?php
 
-namespace Oneup\iCalExport\Module;
+declare(strict_types=1);
 
+namespace Oneup\Contao\ICalExportBundle\Module;
+
+use Contao\BackendTemplate;
+use Contao\CalendarEventsModel;
+use Contao\Environment;
+use Contao\Events;
+use Contao\Input;
 use Eluceo\iCal\Component\Calendar;
 use Eluceo\iCal\Component\Event;
+use Patchwork\Utf8;
 
-class iCalExport extends \Events
+class ICalExport extends Events
 {
     protected $strTemplate = 'mod_ical_export';
 
-    public function generate()
+    public function generate(): string
     {
         if (TL_MODE === 'BE') {
-            $objTemplate = new \BackendTemplate('be_wildcard');
+            $objTemplate = new BackendTemplate('be_wildcard');
 
-            $objTemplate->wildcard = '### '.utf8_strtoupper($GLOBALS['TL_LANG']['FMD']['ical_export'][0]).' ###';
+            $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['ical_export'][0]).' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
@@ -25,11 +33,11 @@ class iCalExport extends \Events
 
         // Set the item from the auto_item parameter
         if (!isset($_GET['events']) && $GLOBALS['TL_CONFIG']['useAutoItem'] && isset($_GET['auto_item'])) {
-            \Input::setGet('events', \Input::get('auto_item'));
+            Input::setGet('events', Input::get('auto_item'));
         }
 
         // Do not index or cache the page if no event has been specified
-        if (!\Input::get('events')) {
+        if (!Input::get('events')) {
             global $objPage;
             $objPage->noSearch = 1;
             $objPage->cache = 0;
@@ -51,9 +59,9 @@ class iCalExport extends \Events
         return parent::generate();
     }
 
-    public function sendIcsFile($objEvent)
+    public function sendIcsFile(CalendarEventsModel $objEvent): void
     {
-        $vCalendar = new Calendar(\Environment::get('url'));
+        $vCalendar = new Calendar(Environment::get('url'));
         $vEvent = new Event();
         $noTime = false;
 
@@ -88,15 +96,15 @@ class iCalExport extends \Events
         exit;
     }
 
-    protected function compile()
+    protected function compile(): void
     {
-        $objEvent = \CalendarEventsModel::findPublishedByParentAndIdOrAlias(\Input::get('events'), $this->cal_calendar);
+        $objEvent = CalendarEventsModel::findPublishedByParentAndIdOrAlias(Input::get('events'), $this->cal_calendar);
 
-        if ('' === \Input::get('ics')) {
+        if ('' === Input::get('ics') && null !== $objEvent) {
             $this->sendIcsFile($objEvent);
         }
 
-        $this->Template->href = \Environment::get('request').'?ics';
+        $this->Template->href = Environment::get('request').'?ics';
         $this->Template->title = $GLOBALS['TL_LANG']['MSC']['ical_download'];
         $this->Template->link = $GLOBALS['TL_LANG']['MSC']['ical_download'];
         $this->Template->objEvent = $objEvent;
