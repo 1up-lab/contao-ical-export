@@ -11,7 +11,7 @@ class iCalExport extends \Events
 
     public function generate()
     {
-        if (TL_MODE == 'BE') {
+        if (TL_MODE === 'BE') {
             $objTemplate = new \BackendTemplate('be_wildcard');
 
             $objTemplate->wildcard = '### '.utf8_strtoupper($GLOBALS['TL_LANG']['FMD']['ical_export'][0]).' ###';
@@ -54,31 +54,30 @@ class iCalExport extends \Events
     public function sendIcsFile($objEvent)
     {
         $vCalendar = new Calendar(\Environment::get('url'));
-        $vEvent    = new Event();
-        $noTime    = false;
+        $vEvent = new Event();
+        $noTime = false;
 
         if ($objEvent->startTime === $objEvent->startDate && $objEvent->endTime === $objEvent->endDate) {
             $noTime = true;
         }
 
         $vEvent
-            ->setDtStart(\DateTime::createFromFormat("d.m.Y - H:i:s", date("d.m.Y - H:i:s", $objEvent->startTime)))
-            ->setDtEnd(\DateTime::createFromFormat("d.m.Y - H:i:s", date("d.m.Y - H:i:s", $objEvent->endTime)))
+            ->setDtStart(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', (int) $objEvent->startTime)))
+            ->setDtEnd(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', (int) $objEvent->endTime)))
             ->setSummary(strip_tags($this->replaceInsertTags($objEvent->title)))
             ->setUseUtc(false)
             ->setLocation($objEvent->location)
-            ->setNoTime($noTime);
+            ->setNoTime($noTime)
+        ;
 
         // HOOK: modify the vEvent
-        if (isset($GLOBALS['TL_HOOKS']['modifyIcsFile']) && is_array($GLOBALS['TL_HOOKS']['modifyIcsFile']))
-        {
-            foreach ($GLOBALS['TL_HOOKS']['modifyIcsFile'] as $callback)
-            {
+        if (isset($GLOBALS['TL_HOOKS']['modifyIcsFile']) && is_array($GLOBALS['TL_HOOKS']['modifyIcsFile'])) {
+            foreach ($GLOBALS['TL_HOOKS']['modifyIcsFile'] as $callback) {
                 $this->import($callback[0]);
                 $this->{$callback[0]}->{$callback[1]}($vEvent, $objEvent, $this);
             }
         }
-        
+
         $vCalendar->addComponent($vEvent);
 
         header('Content-Type: text/calendar; charset=utf-8');
@@ -93,13 +92,13 @@ class iCalExport extends \Events
     {
         $objEvent = \CalendarEventsModel::findPublishedByParentAndIdOrAlias(\Input::get('events'), $this->cal_calendar);
 
-        if (\Input::get('ics') === '') {
+        if ('' === \Input::get('ics')) {
             $this->sendIcsFile($objEvent);
         }
 
-        $this->Template->href     = \Environment::get('request')."?ics";
-        $this->Template->title    = $GLOBALS['TL_LANG']['MSC']['ical_download'];
-        $this->Template->link     = $GLOBALS['TL_LANG']['MSC']['ical_download'];
+        $this->Template->href = \Environment::get('request').'?ics';
+        $this->Template->title = $GLOBALS['TL_LANG']['MSC']['ical_download'];
+        $this->Template->link = $GLOBALS['TL_LANG']['MSC']['ical_download'];
         $this->Template->objEvent = $objEvent;
     }
 }
