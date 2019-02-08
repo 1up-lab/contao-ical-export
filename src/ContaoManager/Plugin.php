@@ -18,7 +18,7 @@ class Plugin implements BundlePluginInterface
         return [
             BundleConfig::create(OneupContaoICalExportBundle::class)->setLoadAfter([
                 ContaoCoreBundle::class,
-                ContaoCalendarBundle::class
+                ContaoCalendarBundle::class,
             ]),
         ];
     }
