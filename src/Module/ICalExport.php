@@ -111,7 +111,9 @@ class ICalExport extends Events
             $this->sendIcsFile($objEvent);
         }
 
-        $this->Template->href = Environment::get('request') . '?ics';
+        $query = parse_url(Environment::get('request'), PHP_URL_QUERY);
+
+        $this->Template->href = Environment::get('request') . (null === $query ? '?ics' : '&ics');
         $this->Template->title = $GLOBALS['TL_LANG']['MSC']['ical_download'];
         $this->Template->link = $GLOBALS['TL_LANG']['MSC']['ical_download'];
         $this->Template->objEvent = $objEvent;
