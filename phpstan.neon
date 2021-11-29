@@ -1,0 +1,13 @@
+parameters:
+    bootstrapFiles:
+        - %rootDir%/../../../vendor/autoload.php
+
+    checkMissingIterableValueType: false
+
+    excludePaths:
+        - vendor
+        - src/Module/ICalExport.php
+
+    universalObjectCratesClasses:
+        - Contao\Template
+        - Contao\Widget

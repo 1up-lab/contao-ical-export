@@ -28,6 +28,7 @@
   "require-dev": {
     "contao/manager-plugin": "^2.0",
     "friendsofphp/php-cs-fixer": "^2.12",
+    "phpstan/phpstan": "^1.0",
     "phpunit/phpunit": "9.5"
   },
   "autoload": {
