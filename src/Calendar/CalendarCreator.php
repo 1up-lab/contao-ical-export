@@ -4,34 +4,47 @@ declare(strict_types=1);
 
 namespace Oneup\Contao\ICalExportBundle\Calendar;
 
-use Eluceo\iCal\Component\Calendar;
-use Eluceo\iCal\Component\Event;
-use Eluceo\iCal\Component\Timezone;
+use DateTimeZone as PhpDateTimeZone;
+use Eluceo\iCal\Domain\Entity\Calendar;
+use Eluceo\iCal\Domain\Entity\Event;
+use Eluceo\iCal\Domain\Entity\TimeZone;
+use Eluceo\iCal\Domain\ValueObject\DateTime;
+use Eluceo\iCal\Domain\ValueObject\Location;
+use Eluceo\iCal\Domain\ValueObject\TimeSpan;
+use Eluceo\iCal\Domain\ValueObject\Uri;
+use Eluceo\iCal\Presentation\Component;
+use Eluceo\iCal\Presentation\Factory\CalendarFactory;
 
 class CalendarCreator
 {
-    public function createCalendar(string $url, string $timezone): Calendar
+    public function createCalendar(string $timezone): Calendar
     {
-        $calendar = new Calendar($url);
-
-        $tz = new Timezone($timezone);
-        $calendar->setTimezone($tz);
-
-        return $calendar;
+        return (new Calendar())
+            ->addTimeZone(TimeZone::createFromPhpDateTimeZone(new PhpDateTimeZone($timezone)))
+        ;
     }
 
-    public function createEvent(string $timezone, bool $noTime, string $address, string $location, int $start, int $end, string $title): Event
+    public function createEvent(string $timezone, string $url, string $address, string $location, int $start, int $end, string $title, string $description = ''): Event
     {
         $dateTimeZone = new \DateTimeZone($timezone);
 
-        $event = new Event();
-        $event->setDtStart(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $start), $dateTimeZone));
-        $event->setDtEnd(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $end), $dateTimeZone));
-        $event->setSummary($title);
-        $event->setLocation($address, $location);
-        $event->setNoTime($noTime);
-        $event->setUseTimezone(true);
+        $occurenceStart = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $start), $dateTimeZone), true);
+        $occurenceEnd = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $end), $dateTimeZone), true);
+        $occurrence = new TimeSpan($occurenceStart, $occurenceEnd);
 
-        return $event;
+        return (new Event())
+            ->setSummary($title)
+            ->setDescription($description)
+            ->setUrl(new Uri($url))
+            ->setOccurrence($occurrence)
+            ->setLocation(new Location($address, $location))
+        ;
+    }
+
+    public function createCalendarComponent(Calendar $calendar): Component
+    {
+        $componentFactory = new CalendarFactory();
+
+        return $componentFactory->createCalendar($calendar);
     }
 }

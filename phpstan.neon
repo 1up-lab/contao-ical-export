@@ -8,6 +8,8 @@ parameters:
         - vendor
         - src/Module/ICalExport.php
 
+    ignoreErrors:
+        - '#Parameter .* expects DateTimeInterface, DateTime\|false given#'
+
     universalObjectCratesClasses:
-        - Contao\Template
-        - Contao\Widget
+        - ICal\Event

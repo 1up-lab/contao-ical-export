@@ -66,12 +66,7 @@ class ICalExport extends Events
         /** @var CalendarCreator $calendarCreator */
         $calendarCreator = System::getContainer()->get('oneup.contao.ical_bundle.calendar_creator');
 
-        $calendar = $calendarCreator->createCalendar(Environment::get('url'), Config::get('timeZone'));
-        $noTime = false;
-
-        if ($objEvent->startTime === $objEvent->startDate && $objEvent->endTime === $objEvent->endDate) {
-            $noTime = true;
-        }
+        $calendar = $calendarCreator->createCalendar(Config::get('timeZone'));
 
         $address = $location = strip_tags(StringUtil::decodeEntities(self::replaceInsertTags($objEvent->location)));
 
@@ -81,12 +76,13 @@ class ICalExport extends Events
 
         $event = $calendarCreator->createEvent(
             Config::get('timeZone'),
-            $noTime,
+            Environment::get('url'),
             $address,
             $location,
             (int) $objEvent->startTime,
             (int) $objEvent->endTime,
-            strip_tags(StringUtil::decodeEntities(self::replaceInsertTags($objEvent->title)))
+            strip_tags(StringUtil::decodeEntities(self::replaceInsertTags($objEvent->title))),
+            strip_tags(StringUtil::decodeEntities(self::replaceInsertTags($objEvent->teaser)))
         );
 
         // HOOK: modify the vEvent
@@ -97,12 +93,12 @@ class ICalExport extends Events
             }
         }
 
-        $calendar->addComponent($event);
+        $calendar->addEvent($event);
 
         header('Content-Type: text/calendar; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . $objEvent->alias . '.ics"');
 
-        echo $calendar->render();
+        echo $calendarCreator->createCalendarComponent($calendar);
 
         exit;
     }
