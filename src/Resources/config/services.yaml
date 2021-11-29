@@ -1,0 +1,4 @@
+services:
+    oneup.contao.ical_bundle.calendar_creator:
+        class: Oneup\Contao\ICalExportBundle\Calendar\CalendarCreator
+        public: true
