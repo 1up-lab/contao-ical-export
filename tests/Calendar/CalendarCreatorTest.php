@@ -13,17 +13,20 @@ use PHPUnit\Framework\TestCase;
 
 class CalendarCreatorTest extends TestCase
 {
-    public function testGeneratesValidObject(): void
+    /**
+     * @dataProvider getTimeZoneTestData
+     */
+    public function testGeneratesValidObject(string $timezone, string $startTime, string $endTime): void
     {
+        date_default_timezone_set($timezone);
+
         $now = new \DateTime();
         $calendarCreator = new CalendarCreator();
 
-        $calendar = $calendarCreator->createCalendar(
-            'Europe/Zurich'
-        );
+        $calendar = $calendarCreator->createCalendar();
 
         $event = $calendarCreator->createEvent(
-            'Europe/Zurich',
+            $timezone,
             'https://domain.com',
             'Fadenstrasse 20, 6020 Emmenbrücke',
             'Büro 1up GmbH',
@@ -44,17 +47,27 @@ class CalendarCreatorTest extends TestCase
         $end = $event->dtend_array;
 
         $this->assertSame('Test Event', $event->summary);
-        $this->assertSame('20211122T173000', $event->dtstart);
-        $this->assertSame('20211122T173100', $event->dtend);
+        $this->assertSame($startTime, $event->dtstart);
+        $this->assertSame($endTime, $event->dtend);
         $this->assertSame((string) new DateTimeValue(new Timestamp($now)), $event->dtstamp);
-        $this->assertSame('20211122T173000', $event->dtstart_tz);
-        $this->assertSame('20211122T173100', $event->dtend_tz);
+        $this->assertSame($startTime, $event->dtstart_tz);
+        $this->assertSame($endTime, $event->dtend_tz);
         $this->assertSame('Test Event Description', $event->description);
         $this->assertSame('Fadenstrasse 20, 6020 Emmenbrücke', $event->location);
         $this->assertSame('https://domain.com', $event->url);
-        $this->assertSame('Europe/Zurich', $start[0]['TZID']);
-        $this->assertSame('TZID=Europe/Zurich:20211122T173000', $start[3]);
-        $this->assertSame('Europe/Zurich', $end[0]['TZID']);
-        $this->assertSame('TZID=Europe/Zurich:20211122T173100', $end[3]);
+        $this->assertSame($timezone, $start[0]['TZID']);
+        $this->assertSame(sprintf('TZID=%s:%s', $timezone, $startTime), $start[3]);
+        $this->assertSame($timezone, $end[0]['TZID']);
+        $this->assertSame(sprintf('TZID=%s:%s', $timezone, $endTime), $end[3]);
+    }
+
+    public function getTimeZoneTestData(): array
+    {
+        return [
+            ['UTC', '20211122T163000', '20211122T163100'],
+            ['Europe/Lisbon', '20211122T163000', '20211122T163100'],
+            ['Europe/Zurich', '20211122T173000', '20211122T173100'],
+            ['Atlantic/Azores', '20211122T153000', '20211122T153100'],
+        ];
     }
 }

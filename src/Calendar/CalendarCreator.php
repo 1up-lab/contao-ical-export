@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Oneup\Contao\ICalExportBundle\Calendar;
 
-use DateTimeZone as PhpDateTimeZone;
 use Eluceo\iCal\Domain\Entity\Calendar;
 use Eluceo\iCal\Domain\Entity\Event;
-use Eluceo\iCal\Domain\Entity\TimeZone;
 use Eluceo\iCal\Domain\ValueObject\DateTime;
 use Eluceo\iCal\Domain\ValueObject\Location;
 use Eluceo\iCal\Domain\ValueObject\TimeSpan;
@@ -17,11 +15,9 @@ use Eluceo\iCal\Presentation\Factory\CalendarFactory;
 
 class CalendarCreator
 {
-    public function createCalendar(string $timezone): Calendar
+    public function createCalendar(): Calendar
     {
-        return (new Calendar())
-            ->addTimeZone(TimeZone::createFromPhpDateTimeZone(new PhpDateTimeZone($timezone)))
-        ;
+        return new Calendar();
     }
 
     public function createEvent(string $timezone, string $url, string $address, string $location, int $start, int $end, string $title, string $description = ''): Event
