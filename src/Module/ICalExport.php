@@ -98,7 +98,7 @@ class ICalExport extends Events
         header('Content-Type: text/calendar; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . $objEvent->alias . '.ics"');
 
-        echo $calendarCreator->createCalendarComponent($calendar);
+        echo $calendarCreator->createComponent($calendar);
 
         exit;
     }

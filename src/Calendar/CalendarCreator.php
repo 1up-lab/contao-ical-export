@@ -41,7 +41,7 @@ class CalendarCreator
         ;
     }
 
-    public function createCalendarComponent(Calendar $calendar): Component
+    public function createComponent(Calendar $calendar): Component
     {
         $componentFactory = new CalendarFactory();
 

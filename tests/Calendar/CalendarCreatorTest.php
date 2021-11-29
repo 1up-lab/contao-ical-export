@@ -35,7 +35,7 @@ class CalendarCreatorTest extends TestCase
 
         $calendar->addEvent($event);
 
-        $ical = new ICal((string) $calendarCreator->createCalendarComponent($calendar));
+        $ical = new ICal((string) $calendarCreator->createComponent($calendar));
 
         /** @var Event $event */
         $event = $ical->events()[0];
