@@ -27,7 +27,7 @@ class CalendarCreatorTest extends TestCase
 
         $event = $calendarCreator->createEvent(
             $timezone,
-            'https://domain.com',
+            'https://domain.com/foo/bar?page=1',
             'Fadenstrasse 20, 6020 Emmenbrücke',
             'Büro 1up GmbH',
             1637598600,
@@ -54,7 +54,7 @@ class CalendarCreatorTest extends TestCase
         $this->assertSame($endTime, $event->dtend_tz);
         $this->assertSame('Test Event Description', $event->description);
         $this->assertSame('Fadenstrasse 20, 6020 Emmenbrücke', $event->location);
-        $this->assertSame('https://domain.com', $event->url);
+        $this->assertSame('https://domain.com/foo/bar?page=1', $event->url);
         $this->assertSame($timezone, $start[0]['TZID']);
         $this->assertSame(sprintf('TZID=%s:%s', $timezone, $startTime), $start[3]);
         $this->assertSame($timezone, $end[0]['TZID']);
