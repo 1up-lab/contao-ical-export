@@ -20,22 +20,36 @@
     "source":"https://github.com/1up-lab/contao-ical-export"
   },
   "require":{
-    "php":">=7.1",
-    "contao/core-bundle": "^4.0",
-    "contao/calendar-bundle": "^4.0",
-    "contao-community-alliance/composer-plugin": "^3.0",
-    "eluceo/ical": "~0.6"
+    "php":"^7.4 | ^8.0",
+    "contao/core-bundle": "^4.9",
+    "contao/calendar-bundle": "^4.9",
+    "eluceo/ical": "^2.3"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.0",
-    "friendsofphp/php-cs-fixer": "^2.12"
+    "friendsofphp/php-cs-fixer": "^3.0",
+    "phpstan/phpstan": "^1.0",
+    "phpunit/phpunit": "9.5",
+    "johngrogg/ics-parser": "^3.0"
   },
   "autoload": {
     "psr-4": {
       "Oneup\\Contao\\ICalExportBundle\\": "src"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Oneup\\Contao\\ICalExportBundle\\Tests\\": "tests"
+    }
+  },
   "extra": {
     "contao-manager-plugin": "Oneup\\Contao\\ICalExportBundle\\ContaoManager\\Plugin"
+  },
+  "config": {
+    "allow-plugins": {
+      "contao-components/installer": true,
+      "composer/package-versions-deprecated": true,
+      "contao/manager-plugin": true
+    }
   }
 }

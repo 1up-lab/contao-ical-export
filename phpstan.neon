@@ -1,0 +1,15 @@
+parameters:
+    bootstrapFiles:
+        - %rootDir%/../../../vendor/autoload.php
+
+    checkMissingIterableValueType: false
+
+    excludePaths:
+        - vendor
+        - src/Module/ICalExport.php
+
+    ignoreErrors:
+        - '#Parameter .* expects DateTimeInterface, DateTime\|false given#'
+
+    universalObjectCratesClasses:
+        - ICal\Event

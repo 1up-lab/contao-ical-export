@@ -6,12 +6,13 @@ namespace Oneup\Contao\ICalExportBundle\Module;
 
 use Contao\BackendTemplate;
 use Contao\CalendarEventsModel;
+use Contao\Config;
 use Contao\Environment;
 use Contao\Events;
 use Contao\Input;
 use Contao\StringUtil;
-use Eluceo\iCal\Component\Calendar;
-use Eluceo\iCal\Component\Event;
+use Contao\System;
+use Oneup\Contao\ICalExportBundle\Calendar\CalendarCreator;
 use Patchwork\Utf8;
 
 class ICalExport extends Events
@@ -62,43 +63,42 @@ class ICalExport extends Events
 
     public function sendIcsFile(CalendarEventsModel $objEvent): void
     {
-        $vCalendar = new Calendar(Environment::get('url'));
-        $vEvent = new Event();
-        $noTime = false;
+        /** @var CalendarCreator $calendarCreator */
+        $calendarCreator = System::getContainer()->get('oneup.contao.ical_bundle.calendar_creator');
 
-        if ($objEvent->startTime === $objEvent->startDate && $objEvent->endTime === $objEvent->endDate) {
-            $noTime = true;
-        }
+        $calendar = $calendarCreator->createCalendar(Config::get('timeZone'));
 
         $address = $location = strip_tags(StringUtil::decodeEntities(self::replaceInsertTags($objEvent->location)));
 
-        if (null !== $objEvent->address && \strlen($objEvent->address)) {
+        if (null !== $objEvent->address && '' !== $objEvent->address) {
             $address = strip_tags(StringUtil::decodeEntities(self::replaceInsertTags($objEvent->address)));
         }
 
-        $vEvent
-            ->setDtStart(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', (int) $objEvent->startTime)))
-            ->setDtEnd(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', (int) $objEvent->endTime)))
-            ->setSummary(strip_tags(StringUtil::decodeEntities(self::replaceInsertTags($objEvent->title))))
-            ->setUseUtc(false)
-            ->setLocation($address, $location)
-            ->setNoTime($noTime)
-        ;
+        $event = $calendarCreator->createEvent(
+            Config::get('timeZone'),
+            preg_replace('/[?&]ics=1/', '', Environment::get('uri')),
+            $address,
+            $location,
+            (int) $objEvent->startTime,
+            (int) $objEvent->endTime,
+            strip_tags(StringUtil::decodeEntities(self::replaceInsertTags($objEvent->title))),
+            strip_tags(StringUtil::decodeEntities(self::replaceInsertTags($objEvent->teaser)))
+        );
 
         // HOOK: modify the vEvent
         if (isset($GLOBALS['TL_HOOKS']['modifyIcsFile']) && \is_array($GLOBALS['TL_HOOKS']['modifyIcsFile'])) {
             foreach ($GLOBALS['TL_HOOKS']['modifyIcsFile'] as $callback) {
                 $this->import($callback[0]);
-                $this->{$callback[0]}->{$callback[1]}($vEvent, $objEvent, $this);
+                $this->{$callback[0]}->{$callback[1]}($event, $objEvent, $this);
             }
         }
 
-        $vCalendar->addComponent($vEvent);
+        $calendar->addEvent($event);
 
         header('Content-Type: text/calendar; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . $objEvent->alias . '.ics"');
 
-        echo $vCalendar->render();
+        echo $calendarCreator->createComponent($calendar);
 
         exit;
     }
@@ -107,13 +107,13 @@ class ICalExport extends Events
     {
         $objEvent = CalendarEventsModel::findPublishedByParentAndIdOrAlias(Input::get('events'), $this->cal_calendar);
 
-        if ('' === Input::get('ics') && null !== $objEvent) {
+        if (null !== $objEvent && '1' === Input::get('ics')) {
             $this->sendIcsFile($objEvent);
         }
 
-        $query = parse_url(Environment::get('request'), PHP_URL_QUERY);
+        $query = parse_url(Environment::get('request'), \PHP_URL_QUERY);
 
-        $this->Template->href = Environment::get('request') . (null === $query ? '?ics' : '&ics');
+        $this->Template->href = Environment::get('request') . (null === $query ? '?ics=1' : '&ics=1');
         $this->Template->title = $GLOBALS['TL_LANG']['MSC']['ical_download'];
         $this->Template->link = $GLOBALS['TL_LANG']['MSC']['ical_download'];
         $this->Template->objEvent = $objEvent;
