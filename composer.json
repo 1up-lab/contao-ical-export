@@ -44,5 +44,12 @@
   },
   "extra": {
     "contao-manager-plugin": "Oneup\\Contao\\ICalExportBundle\\ContaoManager\\Plugin"
+  },
+  "config": {
+    "allow-plugins": {
+      "contao-components/installer": true,
+      "composer/package-versions-deprecated": true,
+      "contao/manager-plugin": true
+    }
   }
 }
