@@ -107,7 +107,7 @@ class ICalExport extends Events
     {
         $objEvent = CalendarEventsModel::findPublishedByParentAndIdOrAlias(Input::get('events'), $this->cal_calendar);
 
-        if (null !== $objEvent && '' === Input::get('ics')) {
+        if (null !== $objEvent && '1' === Input::get('ics')) {
             $this->sendIcsFile($objEvent);
         }
 
