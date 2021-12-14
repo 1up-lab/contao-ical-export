@@ -76,7 +76,7 @@ class ICalExport extends Events
 
         $event = $calendarCreator->createEvent(
             Config::get('timeZone'),
-            Environment::get('uri'),
+            preg_replace('/[?&]ics=1/', '', Environment::get('uri')),
             $address,
             $location,
             (int) $objEvent->startTime,
@@ -113,7 +113,7 @@ class ICalExport extends Events
 
         $query = parse_url(Environment::get('request'), \PHP_URL_QUERY);
 
-        $this->Template->href = Environment::get('request') . (null === $query ? '?ics' : '&ics');
+        $this->Template->href = Environment::get('request') . (null === $query ? '?ics=1' : '&ics=1');
         $this->Template->title = $GLOBALS['TL_LANG']['MSC']['ical_download'];
         $this->Template->link = $GLOBALS['TL_LANG']['MSC']['ical_download'];
         $this->Template->objEvent = $objEvent;
