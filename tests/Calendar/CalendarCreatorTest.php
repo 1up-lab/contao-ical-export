@@ -23,7 +23,7 @@ class CalendarCreatorTest extends TestCase
         $now = new \DateTime();
         $calendarCreator = new CalendarCreator();
 
-        $calendar = $calendarCreator->createCalendar($timezone);
+        $calendar = $calendarCreator->createCalendar();
 
         $event = $calendarCreator->createEvent(
             'https://domain.com/foo/bar?page=1',
