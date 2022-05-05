@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Oneup\Contao\ICalExportBundle\Tests\Calendar;
 
-use Eluceo\iCal\Domain\ValueObject\TimeSpan;
 use Eluceo\iCal\Domain\ValueObject\Timestamp;
 use Eluceo\iCal\Presentation\Component\Property\Value\DateTimeValue;
 use ICal\Event;
