@@ -23,10 +23,9 @@ class CalendarCreatorTest extends TestCase
         $now = new \DateTime();
         $calendarCreator = new CalendarCreator();
 
-        $calendar = $calendarCreator->createCalendar();
+        $calendar = $calendarCreator->createCalendar($timezone);
 
         $event = $calendarCreator->createEvent(
-            $timezone,
             'https://domain.com/foo/bar?page=1',
             'Fadenstrasse 20, 6020 Emmenbrücke',
             'Büro 1up GmbH',
@@ -55,10 +54,7 @@ class CalendarCreatorTest extends TestCase
         $this->assertSame('Test Event Description', $event->description);
         $this->assertSame('Fadenstrasse 20, 6020 Emmenbrücke', $event->location);
         $this->assertSame('https://domain.com/foo/bar?page=1', $event->url);
-        $this->assertSame($timezone, $start[0]['TZID']);
-        $this->assertSame(sprintf('TZID=%s:%s', $timezone, $startTime), $start[3]);
-        $this->assertSame($timezone, $end[0]['TZID']);
-        $this->assertSame(sprintf('TZID=%s:%s', $timezone, $endTime), $end[3]);
+        $this->assertSame($timezone, $ical->calendarTimeZone());
     }
 
     public function getTimeZoneTestData(): array

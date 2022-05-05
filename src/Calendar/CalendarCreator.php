@@ -6,6 +6,7 @@ namespace Oneup\Contao\ICalExportBundle\Calendar;
 
 use Eluceo\iCal\Domain\Entity\Calendar;
 use Eluceo\iCal\Domain\Entity\Event;
+use Eluceo\iCal\Domain\Entity\TimeZone;
 use Eluceo\iCal\Domain\ValueObject\DateTime;
 use Eluceo\iCal\Domain\ValueObject\Location;
 use Eluceo\iCal\Domain\ValueObject\TimeSpan;
@@ -15,17 +16,18 @@ use Eluceo\iCal\Presentation\Factory\CalendarFactory;
 
 class CalendarCreator
 {
-    public function createCalendar(): Calendar
+    public function createCalendar(string $timezone): Calendar
     {
-        return new Calendar();
+        $calendar = new Calendar();
+        $calendar->addTimeZone(TimeZone::createFromPhpDateTimeZone(new \DateTimeZone($timezone)));
+
+        return $calendar;
     }
 
-    public function createEvent(string $timezone, string $url, string $address, string $location, int $start, int $end, string $title, string $description = ''): Event
+    public function createEvent(string $url, string $address, string $location, int $start, int $end, string $title, string $description = ''): Event
     {
-        $dateTimeZone = new \DateTimeZone($timezone);
-
-        $occurenceStart = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $start), $dateTimeZone), true);
-        $occurenceEnd = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $end), $dateTimeZone), true);
+        $occurenceStart = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $start)), false);
+        $occurenceEnd = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $end)), false);
         $occurrence = new TimeSpan($occurenceStart, $occurenceEnd);
 
         return (new Event())
@@ -39,8 +41,6 @@ class CalendarCreator
 
     public function createComponent(Calendar $calendar): Component
     {
-        $componentFactory = new CalendarFactory();
-
-        return $componentFactory->createCalendar($calendar);
+        return (new CalendarFactory())->createCalendar($calendar);
     }
 }
