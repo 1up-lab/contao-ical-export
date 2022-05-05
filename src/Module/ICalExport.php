@@ -74,6 +74,7 @@ class ICalExport extends Events
         }
 
         $event = $calendarCreator->createEvent(
+            Config::get('timeZone'),
             preg_replace('/[?&]ics=1/', '', Environment::get('uri')),
             $address,
             $location,

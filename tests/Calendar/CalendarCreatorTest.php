@@ -26,6 +26,7 @@ class CalendarCreatorTest extends TestCase
         $calendar = $calendarCreator->createCalendar($timezone);
 
         $event = $calendarCreator->createEvent(
+            $timezone,
             'https://domain.com/foo/bar?page=1',
             'Fadenstrasse 20, 6020 Emmenbrücke',
             'Büro 1up GmbH',

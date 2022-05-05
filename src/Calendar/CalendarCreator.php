@@ -24,7 +24,7 @@ class CalendarCreator
         return $calendar;
     }
 
-    public function createEvent(string $url, string $address, string $location, int $start, int $end, string $title, string $description = ''): Event
+    public function createEvent(string $timezone, string $url, string $address, string $location, int $start, int $end, string $title, string $description = ''): Event
     {
         $occurenceStart = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $start)), false);
         $occurenceEnd = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $end)), false);
