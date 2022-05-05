@@ -65,7 +65,7 @@ class ICalExport extends Events
         /** @var CalendarCreator $calendarCreator */
         $calendarCreator = System::getContainer()->get('oneup.contao.ical_bundle.calendar_creator');
 
-        $calendar = $calendarCreator->createCalendar(Config::get('timeZone'));
+        $calendar = $calendarCreator->createCalendar();
 
         $address = $location = strip_tags(StringUtil::decodeEntities(self::replaceInsertTags($objEvent->location)));
 
@@ -74,7 +74,6 @@ class ICalExport extends Events
         }
 
         $event = $calendarCreator->createEvent(
-            Config::get('timeZone'),
             preg_replace('/[?&]ics=1/', '', Environment::get('uri')),
             $address,
             $location,
@@ -97,7 +96,7 @@ class ICalExport extends Events
         header('Content-Type: text/calendar; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . $objEvent->alias . '.ics"');
 
-        echo $calendarCreator->createComponent($calendar);
+        echo $calendarCreator->createComponent($calendar, Config::get('timeZone'));
 
         exit;
     }

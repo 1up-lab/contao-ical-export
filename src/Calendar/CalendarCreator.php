@@ -16,15 +16,12 @@ use Eluceo\iCal\Presentation\Factory\CalendarFactory;
 
 class CalendarCreator
 {
-    public function createCalendar(string $timezone): Calendar
+    public function createCalendar(): Calendar
     {
-        $calendar = new Calendar();
-        $calendar->addTimeZone(TimeZone::createFromPhpDateTimeZone(new \DateTimeZone($timezone)));
-
-        return $calendar;
+        return new Calendar();
     }
 
-    public function createEvent(string $timezone, string $url, string $address, string $location, int $start, int $end, string $title, string $description = ''): Event
+    public function createEvent(string $url, string $address, string $location, int $start, int $end, string $title, string $description = ''): Event
     {
         $occurenceStart = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $start)), false);
         $occurenceEnd = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $end)), false);
@@ -39,8 +36,30 @@ class CalendarCreator
         ;
     }
 
-    public function createComponent(Calendar $calendar): Component
+    public function createComponent(Calendar $calendar, string $timezone): Component
     {
+        foreach ($calendar->getEvents() as $event) {
+            $timeZoneData = $this->getTimeZoneFromEvent($event, $timezone);
+            $calendar->addTimeZone($timeZoneData);
+        }
+
         return (new CalendarFactory())->createCalendar($calendar);
+    }
+
+    private function getTimeZoneFromEvent(Event $event, string $timezone): TimeZone
+    {
+        /** @var TimeSpan $occurrence */
+        $occurrence = $event->getOccurrence();
+
+        $begin = $occurrence->getBegin()->getDateTime();
+        $end = $occurrence->getEnd()->getDateTime();
+
+        $phpDateTimeZone = new \DateTimeZone($timezone);
+
+        return TimeZone::createFromPhpDateTimeZone(
+            $phpDateTimeZone,
+            new \DateTimeImmutable($begin->format('Y-m-d H:i:s'), $phpDateTimeZone),
+            new \DateTimeImmutable($end->format('Y-m-d H:i:s'), $phpDateTimeZone)
+        );
     }
 }

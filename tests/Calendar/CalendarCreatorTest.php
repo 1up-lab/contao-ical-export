@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Oneup\Contao\ICalExportBundle\Tests\Calendar;
 
+use Eluceo\iCal\Domain\ValueObject\TimeSpan;
 use Eluceo\iCal\Domain\ValueObject\Timestamp;
 use Eluceo\iCal\Presentation\Component\Property\Value\DateTimeValue;
 use ICal\Event;
@@ -26,7 +27,6 @@ class CalendarCreatorTest extends TestCase
         $calendar = $calendarCreator->createCalendar($timezone);
 
         $event = $calendarCreator->createEvent(
-            $timezone,
             'https://domain.com/foo/bar?page=1',
             'Fadenstrasse 20, 6020 Emmenbrücke',
             'Büro 1up GmbH',
@@ -38,13 +38,10 @@ class CalendarCreatorTest extends TestCase
 
         $calendar->addEvent($event);
 
-        $ical = new ICal((string) $calendarCreator->createComponent($calendar));
+        $ical = new ICal((string) $calendarCreator->createComponent($calendar, $timezone));
 
         /** @var Event $event */
         $event = $ical->events()[0];
-
-        $start = $event->dtstart_array;
-        $end = $event->dtend_array;
 
         $this->assertSame('Test Event', $event->summary);
         $this->assertSame($startTime, $event->dtstart);
