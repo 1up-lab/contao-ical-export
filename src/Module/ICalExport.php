@@ -13,7 +13,6 @@ use Contao\Input;
 use Contao\StringUtil;
 use Contao\System;
 use Oneup\Contao\ICalExportBundle\Calendar\CalendarCreator;
-use Patchwork\Utf8;
 
 class ICalExport extends Events
 {
@@ -24,7 +23,7 @@ class ICalExport extends Events
         if (TL_MODE === 'BE') {
             $objTemplate = new BackendTemplate('be_wildcard');
 
-            $objTemplate->wildcard = '### ' . Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['ical_export'][0]) . ' ###';
+            $objTemplate->wildcard = '### ' . $GLOBALS['TL_LANG']['FMD']['ical_export'][0] . ' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
