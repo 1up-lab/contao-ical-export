@@ -26,7 +26,6 @@ class CalendarCreatorTest extends TestCase
         $calendar = $calendarCreator->createCalendar();
 
         $event = $calendarCreator->createEvent(
-            $timezone,
             'https://domain.com/foo/bar?page=1',
             'Fadenstrasse 20, 6020 Emmenbrücke',
             'Büro 1up GmbH',
@@ -38,13 +37,10 @@ class CalendarCreatorTest extends TestCase
 
         $calendar->addEvent($event);
 
-        $ical = new ICal((string) $calendarCreator->createComponent($calendar));
+        $ical = new ICal((string) $calendarCreator->createComponent($calendar, $timezone));
 
         /** @var Event $event */
         $event = $ical->events()[0];
-
-        $start = $event->dtstart_array;
-        $end = $event->dtend_array;
 
         $this->assertSame('Test Event', $event->summary);
         $this->assertSame($startTime, $event->dtstart);
@@ -55,10 +51,7 @@ class CalendarCreatorTest extends TestCase
         $this->assertSame('Test Event Description', $event->description);
         $this->assertSame('Fadenstrasse 20, 6020 Emmenbrücke', $event->location);
         $this->assertSame('https://domain.com/foo/bar?page=1', $event->url);
-        $this->assertSame($timezone, $start[0]['TZID']);
-        $this->assertSame(sprintf('TZID=%s:%s', $timezone, $startTime), $start[3]);
-        $this->assertSame($timezone, $end[0]['TZID']);
-        $this->assertSame(sprintf('TZID=%s:%s', $timezone, $endTime), $end[3]);
+        $this->assertSame($timezone, $ical->calendarTimeZone());
     }
 
     public function getTimeZoneTestData(): array

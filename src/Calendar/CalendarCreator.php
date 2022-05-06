@@ -6,6 +6,7 @@ namespace Oneup\Contao\ICalExportBundle\Calendar;
 
 use Eluceo\iCal\Domain\Entity\Calendar;
 use Eluceo\iCal\Domain\Entity\Event;
+use Eluceo\iCal\Domain\Entity\TimeZone;
 use Eluceo\iCal\Domain\ValueObject\DateTime;
 use Eluceo\iCal\Domain\ValueObject\Location;
 use Eluceo\iCal\Domain\ValueObject\TimeSpan;
@@ -20,12 +21,10 @@ class CalendarCreator
         return new Calendar();
     }
 
-    public function createEvent(string $timezone, string $url, string $address, string $location, int $start, int $end, string $title, string $description = ''): Event
+    public function createEvent(string $url, string $address, string $location, int $start, int $end, string $title, string $description = ''): Event
     {
-        $dateTimeZone = new \DateTimeZone($timezone);
-
-        $occurenceStart = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $start), $dateTimeZone), true);
-        $occurenceEnd = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $end), $dateTimeZone), true);
+        $occurenceStart = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $start)), false);
+        $occurenceEnd = new DateTime(\DateTime::createFromFormat('d.m.Y - H:i:s', date('d.m.Y - H:i:s', $end)), false);
         $occurrence = new TimeSpan($occurenceStart, $occurenceEnd);
 
         return (new Event())
@@ -37,10 +36,30 @@ class CalendarCreator
         ;
     }
 
-    public function createComponent(Calendar $calendar): Component
+    public function createComponent(Calendar $calendar, string $timezone): Component
     {
-        $componentFactory = new CalendarFactory();
+        foreach ($calendar->getEvents() as $event) {
+            $timeZoneData = $this->getTimeZoneFromEvent($event, $timezone);
+            $calendar->addTimeZone($timeZoneData);
+        }
 
-        return $componentFactory->createCalendar($calendar);
+        return (new CalendarFactory())->createCalendar($calendar);
+    }
+
+    private function getTimeZoneFromEvent(Event $event, string $timezone): TimeZone
+    {
+        /** @var TimeSpan $occurrence */
+        $occurrence = $event->getOccurrence();
+
+        $begin = $occurrence->getBegin()->getDateTime();
+        $end = $occurrence->getEnd()->getDateTime();
+
+        $phpDateTimeZone = new \DateTimeZone($timezone);
+
+        return TimeZone::createFromPhpDateTimeZone(
+            $phpDateTimeZone,
+            new \DateTimeImmutable($begin->format('Y-m-d H:i:s'), $phpDateTimeZone),
+            new \DateTimeImmutable($end->format('Y-m-d H:i:s'), $phpDateTimeZone)
+        );
     }
 }
